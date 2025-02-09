@@ -1,6 +1,6 @@
 #Generating simulated data
 set.seed(1)
-X<-sample(1:100,100,FALSE)
+X<-1:100
 error_terms<-rnorm(100,0,02^2)
 Y_matrix<-matrix(error_terms)
 
@@ -59,3 +59,10 @@ for(i in 1:length(X)){
   
   }
 lowess
+
+output<-lowess(X,Y_matrix,0.051)
+output
+plot(X, Y_matrix, main = "LOWESS Smoothing", xlab = "X", ylab = "Y", pch = 16)
+lines(lowess, col = "red", lwd = 2) 
+lines(output,col="Blue",lwd=2)
+
