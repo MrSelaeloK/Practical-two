@@ -13,7 +13,7 @@ k<-ceiling(0.021*length(X))#should be put inside function
 
 #number of neighbuors determines how much sectioning off is done
 #matrices and vectors
-weights<-matrix(101:200,
+weights<-rep(NA,
                 length(X))
 distances_and_index<-matrix(NA,
                   length(X),ncol=2)
@@ -21,12 +21,11 @@ sortedDistances_and_index<-matrix(NA,
                                  length(X),ncol=2)
 y_estimates<-matrix(NA,length(X))
 
-closest_neighbourh_bin<-matrix(length(X),k)# check if reset exists before entering outer loop
+lowess<-rep(NA,length(X))# check if reset exists before entering outer loop
 
 #find K closest relatives
 #take a smaller and kick out the largest
-#for(i in 1:length(X)){
-  i<-1
+for(i in 1:length(X)){
   for(j in 1:length(X)){
     distances_and_index[j,1]<-abs(X[j]-X[i])
     distances_and_index[j,2]<-j
@@ -46,8 +45,17 @@ closest_neighbourh_bin<-matrix(length(X),k)# check if reset exists before enteri
       weights[sortedDistances_and_index[l,2]]<-
        (1-(abs(X[i]-X[sortedDistances_and_index[l,2]])/maxdistance)^3)^3
     }else{
-      weights
+      weights[sortedDistances_and_index[l, 2]] <- 0
     }
   }
-  weights
-#}
+  
+  #calculating the beta
+  new_X<-cbind(rep(1,length(X)),X)
+  new_X
+  Beta_coefficients<-solve(t(new_X)%*%diag(weights)%*%new_X)%*%(t(new_X)%*%diag(weights)%*%Y_matrix)
+  Beta_coefficients
+  
+  lowess[i]<-Beta_coefficients[1]+Beta_coefficients[2]*X[i]
+  
+  }
+lowess
